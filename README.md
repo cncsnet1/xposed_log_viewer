@@ -2,7 +2,6 @@
 
 <div align="center">
   <img src="/images/logo.png" alt="智能代码分析" width="200"/>
-  <p>基于 JADX 的智能反编译工具</p>
   <p>云麾安全实验室</p>
 </div>
 
