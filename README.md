@@ -110,7 +110,7 @@ public class LogSender {
     
     /**
      * 发送日志到查看器
-     * @param tag 日志标签 (如: "微信Hook", "支付宝Hook")
+     * @param tag 日志标签 (如: "IM应用Hook", "支付应用Hook")
      * @param message 日志内容
      */
     public static void sendLog(String tag, String message) {
@@ -135,10 +135,10 @@ public class LogSender {
     
     // 使用示例
     public void hookExample() {
-        findAndHookMethod("com.tencent.mm.ui.LauncherUI", "onCreate", new XC_MethodHook() {
+        findAndHookMethod("com.example.app.ui.LauncherUI", "onCreate", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                sendLog("微信Hook", "LauncherUI创建成功");
+                sendLog("IM应用Hook", "LauncherUI创建成功");
             }
         });
     }
@@ -177,17 +177,17 @@ object LogSender {
 
 2. **日志分级建议**
    ```java
-   sendLog("微信Hook", "info: 用户登录成功");      // 普通信息
-   sendLog("微信Hook", "warning: 检测到风控");     // 警告信息  
-   sendLog("微信Hook", "error: Hook失败");        // 错误信息
-   sendLog("微信Hook", "debug: 参数值=" + param);  // 调试信息
+   sendLog("IM应用Hook", "info: 用户登录成功");      // 普通信息
+   sendLog("IM应用Hook", "warning: 检测到风控");     // 警告信息  
+   sendLog("IM应用Hook", "error: Hook失败");        // 错误信息
+   sendLog("IM应用Hook", "debug: 参数值=" + param);  // 调试信息
    ```
 
 3. **敏感数据处理**
    ```java
    // 系统会自动检测并高亮显示敏感数据
-   sendLog("支付", "获取到手机号: 138****8888");
-   sendLog("登录", "Token: eyJhbGciOiJIUzI1NiIs...");
+   sendLog("支付应用", "获取到手机号: 138****8888");
+   sendLog("登录模块", "Token: eyJhbGciOiJIUzI1NiIs...");
    ```
 
 ## ⚙️ 配置说明
@@ -216,14 +216,14 @@ BUFFER_SIZE = 1000        # 内存缓冲区大小
 
 #### 1. 纯文本格式 (推荐)
 ```
-微信Hook: 用户登录成功
-支付宝Hook: error: 获取支付密码失败
-抖音Hook: warning: 检测到反调试
+IM应用Hook: 用户登录成功
+支付应用Hook: error: 获取支付密码失败
+短视频应用Hook: warning: 检测到反调试
 ```
 
 #### 2. 带级别的文本格式
 ```
-INFO: 微信启动完成
+INFO: IM应用启动完成
 ERROR: Hook注入失败
 WARNING: 发现敏感API调用
 DEBUG: 参数值 userId=12345
@@ -233,7 +233,7 @@ DEBUG: 参数值 userId=12345
 ```json
 {
     "level": "INFO",
-    "tag": "微信Hook", 
+    "tag": "IM应用Hook", 
     "message": "用户登录成功",
     "timestamp": "2024-01-01T12:00:00"
 }
@@ -277,6 +277,29 @@ A: 确保Xposed模块发送UTF-8编码的文本
 ### ❓ 性能相关
 **Q: 日志太多导致卡顿？**
 A: 系统会自动清理超出限制的旧日志，也可以手动点击"清空日志"按钮
+
+## ⚠️ 免责声明与使用限制
+
+### 🔒 仅限研究使用
+本项目**仅供学习研究和安全测试使用**，请勿用于任何非法用途，包括但不限于：
+- 破解商业软件或绕过版权保护
+- 窃取他人隐私信息或商业机密  
+- 未经授权访问他人设备或数据
+- 任何违反当地法律法规的行为
+
+### 📋 使用者责任
+- 使用本工具进行任何活动时，请遵守当地法律法规
+- 仅在获得明确授权的设备和应用上进行安全研究
+- 对于使用本工具造成的任何后果，开发者不承担责任
+- 如发现安全漏洞，请负责任地向相关厂商报告
+
+### 🎯 建议用途
+- Android应用安全研究和漏洞分析
+- 逆向工程学习和技术交流
+- 个人设备的安全测试和调试
+- 教育培训和学术研究
+
+**请务必合法合规使用，共同维护网络安全环境！**
 
 ## 📄 开源协议
 
