@@ -429,13 +429,33 @@ def create_directories():
 if __name__ == '__main__':
     create_directories()
     
-    print("=" * 50)
-    print("🚀 Xposed日志查看器启动中...")
-    print("=" * 50)
-    print(f"📊 Web界面: http://localhost:5000")
-    print(f"📡 UDP服务: 需要单独启动 udp_server.py")
-    print(f"💾 数据库: {db.db_path}")
-    print("=" * 50)
+    # 设置控制台编码以支持emoji (Windows兼容)
+    try:
+        import sys
+        if sys.platform == 'win32':
+            import os
+            # 尝试设置UTF-8编码
+            os.system('chcp 65001 > nul 2>&1')
+    except:
+        pass
+    
+    try:
+        print("=" * 50)
+        print("🚀 Xposed日志查看器启动中...")
+        print("=" * 50)
+        print(f"📊 Web界面: http://localhost:5000")
+        print(f"📡 UDP服务: 需要单独启动 udp_server.py")
+        print(f"💾 数据库: {db.db_path}")
+        print("=" * 50)
+    except UnicodeEncodeError:
+        # 如果emoji显示失败，使用纯文本版本
+        print("=" * 50)
+        print(">>> Xposed日志查看器启动中...")
+        print("=" * 50)
+        print(f">>> Web界面: http://localhost:5000")
+        print(f">>> UDP服务: 需要单独启动 udp_server.py")
+        print(f">>> 数据库: {db.db_path}")
+        print("=" * 50)
     
     # 启动Web服务
     socketio.run(

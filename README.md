@@ -32,9 +32,9 @@
 
 > 现代化的大厂设计风格，简洁而专业
 
-- **主控制台** - 统计卡片、过滤控制、实时状态一览无余
-- **日志监控** - 实时日志流、智能分级标签、敏感数据高亮
-- **搜索过滤** - 多维度过滤、关键词搜索、历史查询
+### 🖥️ 主控制台
+![主控制台](images/main.png)
+*统计卡片、过滤控制、实时状态一览无余*
 
 ## 🚀 快速开始
 
@@ -49,8 +49,8 @@
 
 1. **下载项目**
 ```bash
-git clone https://github.com/yourusername/xposed-log-viewer.git
-cd xposed-log-viewer
+git clone https://github.com/cncsnet1/xposed_log_viewer.git
+cd xposed_log_viewer
 ```
 
 2. **安装依赖**
@@ -58,9 +58,10 @@ cd xposed-log-viewer
 pip install -r requirements.txt
 ```
 
-3. **启动服务** (一键启动所有服务)
+3. **启动服务** (分别启动服务)
 ```bash
-python start.py
+python app.py
+python udp_server.py
 ```
 
 4. **访问控制台**

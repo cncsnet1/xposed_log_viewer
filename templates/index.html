@@ -761,6 +761,10 @@
             socket.on('new_log', function(logData) {
                 addLogEntry(logData, true);
                 updateLastUpdate();
+                // 每10条新日志刷新一次统计数据，避免过于频繁的API调用
+                if (logs.length % 10 === 0) {
+                    loadStats();
+                }
             });
             
             // 监听清空日志事件
@@ -810,7 +814,24 @@
             });
             
             // 按钮事件
-            document.getElementById('refresh-logs').addEventListener('click', loadLogs);
+            document.getElementById('refresh-logs').addEventListener('click', function() {
+                const refreshBtn = this;
+                const originalHTML = refreshBtn.innerHTML;
+                
+                // 显示加载状态
+                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 刷新中...';
+                refreshBtn.disabled = true;
+                
+                // 同时刷新日志和统计数据
+                Promise.all([
+                    loadLogsPromise(),
+                    loadStatsPromise()
+                ]).finally(() => {
+                    // 恢复按钮状态
+                    refreshBtn.innerHTML = originalHTML;
+                    refreshBtn.disabled = false;
+                });
+            });
             document.getElementById('clear-logs').addEventListener('click', clearLogs);
             document.getElementById('test-logs').addEventListener('click', sendTestLogs);
             document.getElementById('scroll-to-bottom').addEventListener('click', scrollToBottom);
@@ -870,9 +891,56 @@
                 });
         }
 
+        // 加载日志（Promise版本）
+        function loadLogsPromise() {
+            if (isLoading) return Promise.resolve();
+            isLoading = true;
+            
+            const level = document.getElementById('level-filter').value;
+            const search = document.getElementById('search-input').value;
+            
+            const params = new URLSearchParams({
+                page: currentPage,
+                per_page: 100,
+                level: level,
+                search: search
+            });
+            
+            return fetch(`/api/logs?${params}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayLogs(data.logs);
+                        updateLastUpdate();
+                    } else {
+                        console.error('加载日志失败:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('加载日志失败:', error);
+                })
+                .finally(() => {
+                    isLoading = false;
+                });
+        }
+
         // 加载统计信息
         function loadStats() {
             fetch('/api/stats')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateStats(data.stats);
+                    }
+                })
+                .catch(error => {
+                    console.error('加载统计信息失败:', error);
+                });
+        }
+
+        // 加载统计信息（Promise版本）
+        function loadStatsPromise() {
+            return fetch('/api/stats')
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -1010,6 +1078,13 @@
         // 清空日志显示
         function clearLogs() {
             if (confirm('确定要清空所有日志吗？这将删除数据库中的所有日志记录！')) {
+                const clearBtn = document.getElementById('clear-logs');
+                const originalHTML = clearBtn.innerHTML;
+                
+                // 显示加载状态
+                clearBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 清空中...';
+                clearBtn.disabled = true;
+                
                 fetch('/api/clear', {
                     method: 'POST',
                     headers: {
@@ -1020,7 +1095,14 @@
                 .then(data => {
                     if (data.success) {
                         // 清空前端显示
-                        document.getElementById('log-container').innerHTML = '';
+                        document.getElementById('log-container').innerHTML = `
+                            <div class="text-center" style="padding: var(--space-xxl); background: var(--bg-gray);">
+                                <div class="loading mb-3"></div>
+                                <h6 style="color: var(--text-secondary); margin-bottom: var(--space-sm);">日志已清空</h6>
+                                <p style="color: var(--text-disabled); margin: 0; font-size: 13px;">等待Xposed模块发送新日志数据...</p>
+                                <small style="color: var(--text-disabled);">UDP端口: 9999 | WebSocket: 已连接</small>
+                            </div>
+                        `;
                         logs = [];
                         // 重新加载统计信息
                         loadStats();
@@ -1031,23 +1113,42 @@
                 })
                 .catch(error => {
                     alert('清空日志失败: ' + error);
+                })
+                .finally(() => {
+                    // 恢复按钮状态
+                    clearBtn.innerHTML = originalHTML;
+                    clearBtn.disabled = false;
                 });
             }
         }
 
         // 发送测试日志
         function sendTestLogs() {
+            const testBtn = document.getElementById('test-logs');
+            const originalHTML = testBtn.innerHTML;
+            
+            // 显示加载状态
+            testBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 发送中...';
+            testBtn.disabled = true;
+            
             fetch('/api/test')
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         alert(data.message);
+                        // 发送测试日志后刷新统计数据
+                        loadStats();
                     } else {
                         alert('发送测试日志失败: ' + data.error);
                     }
                 })
                 .catch(error => {
                     alert('发送测试日志失败: ' + error);
+                })
+                .finally(() => {
+                    // 恢复按钮状态
+                    testBtn.innerHTML = originalHTML;
+                    testBtn.disabled = false;
                 });
         }
 
