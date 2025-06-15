@@ -1,5 +1,11 @@
 # 🔍 Xposed日志查看器
 
+<div align="center">
+  <img src="/images/logo.png" alt="智能代码分析" width="200"/>
+  <p>基于 JADX 的智能反编译工具</p>
+  <p>云麾安全实验室</p>
+</div>
+
 [![Python](https://img.shields.io/badge/Python-3.7+-blue.svg)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-2.0+-green.svg)](https://flask.palletsprojects.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -33,7 +39,7 @@
 > 现代化的大厂设计风格，简洁而专业
 
 ### 🖥️ 主控制台
-![主控制台](images/main.png)
+![主控制台](images/main1.png)
 *统计卡片、过滤控制、实时状态一览无余*
 
 ## 🚀 快速开始
